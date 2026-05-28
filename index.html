@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium To-Do List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS Custom Properties / Variables --- */
+        :root {
+            --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #a0aec0;
+            --primary: #667eea;
+            --primary-hover: #5a67d8;
+            
+            /* Red Delete Button Colors */
+            --danger-bg: #ffe4e6;       /* Soft red box background */
+            --danger-icon: #e11d48;     /* Crisp red icon color */
+            --danger-hover-bg: #f43f5e; /* Vibrant solid red on hover */
+            
+            --border-radius: 12px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* --- Reset & Global Base --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--gradient-bg);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* --- Dashboard Container --- */
+        .todo-container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 480px;
+            padding: 35px 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        /* --- Progress Section --- */
+        .progress-container {
+            margin-bottom: 25px;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .progress-bar-bg {
+            background-color: #edf2f7;
+            height: 6px;
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            background: var(--gradient-bg);
+            height: 100%;
+            width: 0%;
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        /* --- Input Action Group --- */
+        .input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        #taskInput {
+            flex: 1;
+            padding: 14px 18px;
+            font-size: 0.95rem;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            outline: none;
+            transition: var(--transition);
+            color: var(--text-main);
+        }
+
+        #taskInput::placeholder {
+            color: #cbd5e0;
+        }
+
+        #taskInput:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-add {
+            background-color: var(--primary);
+            color: white;
+            padding: 14px 24px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-add:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* --- Dynamic Task List --- */
+        ul {
+            list-style-type: none;
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        ul::-webkit-scrollbar {
+            width: 5px;
+        }
+        ul::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f7fafc;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid #edf2f7;
+            transition: var(--transition);
+            animation: fadeIn 0.3s ease;
+        }
+
+        li:hover {
+            background-color: #fff;
+            border-color: #e2e8f0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.02);
+        }
+
+        .task-content {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        /* Checkbox Interaction */
+        input[type="checkbox"] {
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border: 2px solid #cbd5e0;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+            background-color: #fff;
+        }
+
+        input[type="checkbox"]:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 3px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .task-text {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-main);
+            transition: var(--transition);
+            word-break: break-word;
+        }
+
+        .completed {
+            background-color: #f7fafc !important;
+            border-color: #edf2f7 !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .completed .task-text {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        /* --- Redesigned Red Trash Box Button --- */
+        .btn-delete {
+            background-color: var(--danger-bg);
+            color: var(--danger-icon);
+            padding: 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0; /* Prevents the button from shrinking or distorting */
+        }
+
+        .btn-delete:hover {
+            background-color: var(--danger-hover-bg);
+            color: #ffffff;
+            transform: scale(1.08);
+            box-shadow: 0 4px 10px rgba(244, 63, 94, 0.2);
+        }
+
+        /* --- Keyframe Entry Animation --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Responsive Breakpoints --- */
+        @media (max-width: 480px) {
+            .todo-container {
+                padding: 25px 20px;
+            }
+            .input-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .btn-add {
+                width: 100%;
+                padding: 12px;
+            }
+            #taskInput {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="todo-container">
+        <h1>My Tasks</h1>
+        
+        <div class="progress-container">
+            <div class="progress-stats">
+                <span id="progressPercent">0% Done</span>
+                <span id="taskCountText">0 / 0 tasks</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div id="progressBar" class="progress-bar-fill"></div>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <input type="text" id="taskInput" placeholder="Add a brilliant plan..." onkeypress="handleKeyPress(event)">
+            <button class="btn-add" onclick="addTask()">Add Task</button>
+        </div>
+
+        <ul id="taskList">
+            </ul>
+    </div>
+
+    <script>
+        // --- State Management ---
+        let tasks = JSON.parse(localStorage.getItem('todoTasks')) || [];
+
+        // --- Core Render & Metric Calculations ---
+        function renderTasks() {
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = ''; 
+
+            tasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                if (task.completed) li.classList.add('completed');
+
+                li.innerHTML = `
+                    <div class="task-content" onclick="toggleTask(${index})">
+                        <input type="checkbox" ${task.completed ? 'checked' : ''} onclick="event.stopPropagation(); toggleTask(${index})">
+                        <span class="task-text">${task.text}</span>
+                    </div>
+                    <button class="btn-delete" onclick="event.stopPropagation(); deleteTask(${index})" title="Delete Task">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                    </button>
+                `;
+                taskList.appendChild(li);
+            });
+
+            updateMetrics();
+            saveData();
+        }
+
+        // --- Calculate Dashboard Analytics ---
+        function updateMetrics() {
+            const total = tasks.length;
+            const completed = tasks.filter(t => t.completed).length;
+            const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+            document.getElementById('taskCountText').innerText = `${completed} / ${total} tasks`;
+            document.getElementById('progressPercent').innerText = `${percentage}% Done`;
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+        }
+
+        // --- CRUD Logic Hooks ---
+        function addTask() {
+            const inputField = document.getElementById('taskInput');
+            const taskText = inputField.value.trim();
+
+            if (taskText !== '') {
+                tasks.push({ text: taskText, completed: false });
+                inputField.value = ''; 
+                renderTasks();
+            }
+        }
+
+        function toggleTask(index) {
+            tasks[index].completed = !tasks[index].completed;
+            renderTasks();
+        }
+
+        function deleteTask(index) {
+            tasks.splice(index, 1);
+            renderTasks();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                addTask();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('todoTasks', JSON.stringify(tasks));
+        }
+
+        // --- App Bootstrap ---
+        renderTasks();
+    </script>
+</body>
+</html>
