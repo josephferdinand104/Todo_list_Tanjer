@@ -235,7 +235,6 @@
             color: var(--text-muted);
         }
 
-        /* --- Redesigned Red Trash Box Button --- */
         .btn-delete {
             background-color: var(--danger-bg);
             color: var(--danger-icon);
@@ -244,7 +243,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0; /* Prevents the button from shrinking or distorting */
+            flex-shrink: 0; 
         }
 
         .btn-delete:hover {
@@ -380,7 +379,6 @@
             localStorage.setItem('todoTasks', JSON.stringify(tasks));
         }
 
-        // --- App Bootstrap ---
         renderTasks();
     </script>
 </body>
