@@ -5,11 +5,10 @@ A user-friendly, modern, and highly responsive single-page To-Do List applicatio
 
 **Features**
 
-* **Premium UI/UX:** Built with the elegant 'Poppins' font, subtle transitions, entry animations, and a modern mesh gradient background.
+* **Design:** Built with the elegant 'Poppins' font, subtle transitions, entry animations, and a modern mesh gradient background.
 * **Dynamic Progress Tracker:** A live progress bar and statistics counter show your completion percentage in real-time.
 * **Persistent Storage:** Uses browser `localStorage` so your tasks remain safe even if you refresh or close the page.
 * **Fully Responsive:** Fluid layouts designed with CSS Flexbox that adapt perfectly to desktops, tablets, and mobile screens.
-* **Redesigned Delete Action:** A clear, custom-built red trash box that expands slightly and turns vibrant on hover.
 
 
 **How to Run the Project Locally**
